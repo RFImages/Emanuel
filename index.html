@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Before / After Slider</title>
+  <title>Before / After Sliders</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -10,22 +10,13 @@
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: #f5f5f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    .wrapper {
-      max-width: 800px;
-      width: 100%;
       padding: 20px;
     }
 
     h1 {
-      font-size: 1.4rem;
       text-align: center;
-      margin-bottom: 16px;
+      margin: 40px 0 20px;
+      font-size: 1.6rem;
     }
 
     .slider-container {
@@ -35,9 +26,9 @@
       aspect-ratio: 16 / 9;
       overflow: hidden;
       border-radius: 8px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      margin: 0 auto 40px;
       background: #000;
-      margin: 0 auto;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
 
     .slider-image {
@@ -62,9 +53,9 @@
       left: 50%;
       width: 2px;
       background: #ffffff;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.4);
       cursor: ew-resize;
       transform: translateX(-50%);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.4);
     }
 
     .slider-handle::before {
@@ -76,8 +67,8 @@
       height: 32px;
       border-radius: 50%;
       background: #ffffff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
       transform: translate(-50%, -50%);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
 
     .slider-handle::after {
@@ -88,7 +79,6 @@
       transform: translate(-50%, -50%);
       font-size: 16px;
       color: #555;
-      z-index: 2;
     }
 
     .label {
@@ -96,56 +86,64 @@
       top: 10px;
       padding: 4px 10px;
       font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
       background: rgba(0,0,0,0.55);
       color: #fff;
       border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
 
-    .label.before {
-      left: 10px;
-    }
-
-    .label.after {
-      right: 10px;
-    }
+    .label.before { left: 10px; }
+    .label.after { right: 10px; }
 
     p.note {
       text-align: center;
-      font-size: 0.85rem;
       color: #666;
-      margin-top: 10px;
+      margin-top: -20px;
+      margin-bottom: 40px;
+      font-size: 0.9rem;
     }
   </style>
 </head>
+
 <body>
-  <div class="wrapper">
-    <h1>Before / After Comparison</h1>
 
-    <div class="slider-container" id="slider">
-      <!-- Replace these URLs with your own images -->
-      <img src="Is.jpg"
-           alt="Before"
-           class="slider-image before">
-      <img src="grey.jpg"
-           alt="After"
-           class="slider-image after"
-           id="afterImage">
+  <!-- SLIDER 1 -->
+  <h1>Before / After Comparison 1</h1>
 
-      <div class="slider-handle" id="handle"></div>
-      <div class="label before">Before</div>
-      <div class="label after">After</div>
-    </div>
+  <div class="slider-container" id="slider1">
+    <img src="Is.jpg" class="slider-image before" alt="Before">
+    <img src="grey.jpg" class="slider-image after" id="afterImage1" alt="After">
 
-    <p class="note">Drag the handle left or right to compare.</p>
+    <div class="slider-handle" id="handle1"></div>
+    <div class="label before">Before</div>
+    <div class="label after">After</div>
   </div>
 
+  <p class="note">Drag the handle left or right to compare.</p>
+
+
+  <!-- SLIDER 2 -->
+  <h1>Before / After Comparison 2</h1>
+
+  <div class="slider-container" id="slider2">
+    <img src="grey.jpg" class="slider-image before" alt="Before">
+    <img src="gold.jpg" class="slider-image after" id="afterImage2" alt="After">
+
+    <div class="slider-handle" id="handle2"></div>
+    <div class="label before">Before</div>
+    <div class="label after">After</div>
+  </div>
+
+  <p class="note">Drag the handle left or right to compare.</p>
+
+
+  <!-- JAVASCRIPT FOR BOTH SLIDERS -->
   <script>
-    (function () {
-      const slider = document.getElementById('slider');
-      const handle = document.getElementById('handle');
-      const afterImage = document.getElementById('afterImage');
+    function initSlider(sliderId, handleId, afterId) {
+      const slider = document.getElementById(sliderId);
+      const handle = document.getElementById(handleId);
+      const afterImage = document.getElementById(afterId);
 
       let isDragging = false;
 
@@ -156,24 +154,20 @@
         if (x > rect.width) x = rect.width;
 
         const percent = (x / rect.width) * 100;
-        handle.style.left = percent + '%';
+        handle.style.left = percent + "%";
         afterImage.style.clipPath = `inset(0 0 0 ${percent}%)`;
       }
 
       function startDrag(e) {
         isDragging = true;
-        if (e.type === 'mousedown') {
-          setPosition(e.clientX);
-        } else if (e.type === 'touchstart') {
-          setPosition(e.touches[0].clientX);
-        }
+        if (e.type === "mousedown") setPosition(e.clientX);
+        if (e.type === "touchstart") setPosition(e.touches[0].clientX);
       }
 
       function onMove(e) {
         if (!isDragging) return;
-        if (e.type === 'mousemove') {
-          setPosition(e.clientX);
-        } else if (e.type === 'touchmove') {
+        if (e.type === "mousemove") setPosition(e.clientX);
+        if (e.type === "touchmove") {
           e.preventDefault();
           setPosition(e.touches[0].clientX);
         }
@@ -183,15 +177,20 @@
         isDragging = false;
       }
 
-      handle.addEventListener('mousedown', startDrag);
-      window.addEventListener('mousemove', onMove);
-      window.addEventListener('mouseup', endDrag);
+      handle.addEventListener("mousedown", startDrag);
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("mouseup", endDrag);
 
-      handle.addEventListener('touchstart', startDrag, { passive: true });
-      window.addEventListener('touchmove', onMove, { passive: false });
-      window.addEventListener('touchend', endDrag);
-      window.addEventListener('touchcancel', endDrag);
-    })();
+      handle.addEventListener("touchstart", startDrag, { passive: true });
+      window.addEventListener("touchmove", onMove, { passive: false });
+      window.addEventListener("touchend", endDrag);
+      window.addEventListener("touchcancel", endDrag);
+    }
+
+    // Initialize both sliders
+    initSlider("slider1", "handle1", "afterImage1");
+    initSlider("slider2", "handle2", "afterImage2");
   </script>
+
 </body>
 </html>

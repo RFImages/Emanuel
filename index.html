@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Before / After Slider</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .wrapper {
+      max-width: 800px;
+      width: 100%;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .slider-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      background: #000;
+      margin: 0 auto;
+    }
+
+    .slider-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .slider-image.after {
+      clip-path: inset(0 0 0 50%);
+      transition: clip-path 0.05s linear;
+    }
+
+    .slider-handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 2px;
+      background: #ffffff;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.4);
+      cursor: ew-resize;
+      transform: translateX(-50%);
+    }
+
+    .slider-handle::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      transform: translate(-50%, -50%);
+    }
+
+    .slider-handle::after {
+      content: "⇆";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 16px;
+      color: #555;
+      z-index: 2;
+    }
+
+    .label {
+      position: absolute;
+      top: 10px;
+      padding: 4px 10px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      border-radius: 999px;
+    }
+
+    .label.before {
+      left: 10px;
+    }
+
+    .label.after {
+      right: 10px;
+    }
+
+    p.note {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>Before / After Comparison</h1>
+
+    <div class="slider-container" id="slider">
+      <!-- Replace these URLs with your own images -->
+      <img src="https://via.placeholder.com/1280x720/cccccc/000000?text=Before"
+           alt="Before"
+           class="slider-image before">
+      <img src="https://via.placeholder.com/1280x720/ff9966/000000?text=After"
+           alt="After"
+           class="slider-image after"
+           id="afterImage">
+
+      <div class="slider-handle" id="handle"></div>
+      <div class="label before">Before</div>
+      <div class="label after">After</div>
+    </div>
+
+    <p class="note">Drag the handle left or right to compare.</p>
+  </div>
+
+  <script>
+    (function () {
+      const slider = document.getElementById('slider');
+      const handle = document.getElementById('handle');
+      const afterImage = document.getElementById('afterImage');
+
+      let isDragging = false;
+
+      function setPosition(clientX) {
+        const rect = slider.getBoundingClientRect();
+        let x = clientX - rect.left;
+        if (x < 0) x = 0;
+        if (x > rect.width) x = rect.width;
+
+        const percent = (x / rect.width) * 100;
+        handle.style.left = percent + '%';
+        afterImage.style.clipPath = `inset(0 0 0 ${percent}%)`;
+      }
+
+      function startDrag(e) {
+        isDragging = true;
+        if (e.type === 'mousedown') {
+          setPosition(e.clientX);
+        } else if (e.type === 'touchstart') {
+          setPosition(e.touches[0].clientX);
+        }
+      }
+
+      function onMove(e) {
+        if (!isDragging) return;
+        if (e.type === 'mousemove') {
+          setPosition(e.clientX);
+        } else if (e.type === 'touchmove') {
+          e.preventDefault();
+          setPosition(e.touches[0].clientX);
+        }
+      }
+
+      function endDrag() {
+        isDragging = false;
+      }
+
+      handle.addEventListener('mousedown', startDrag);
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', endDrag);
+
+      handle.addEventListener('touchstart', startDrag, { passive: true });
+      window.addEventListener('touchmove', onMove, { passive: false });
+      window.addEventListener('touchend', endDrag);
+      window.addEventListener('touchcancel', endDrag);
+    })();
+  </script>
+</body>
+</html>
